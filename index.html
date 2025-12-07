@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Web Chat</title>
+  <link rel="icon" type="image/x-icon" href="https://img.icons8.com/?size=100&id=pnUfrhjBRScY">
+
+  <style>
+    :root {
+      --bg: #dfe9f3;
+      --container-bg: rgba(255,255,255,0.75);
+      --text: #111;
+      --bubble-ai: #ffffff;
+      --bubble-user: linear-gradient(135deg, #3b82f6, #2563eb);
+      --input-bg: #fff;
+      --border: rgba(0,0,0,0.1);
+    }
+
+    /* DARK MODE VARIABLES */
+    body.dark {
+      --bg: #0e0f11;
+      --container-bg: rgba(25,25,26,0.75);
+      --text: #e5e5e5;
+      --bubble-ai: rgba(255,255,255,0.08);
+      --bubble-user: linear-gradient(135deg, #4f8cff, #1a5fff);
+      --input-bg: #1c1d20;
+      --border: rgba(255,255,255,0.15);
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      font-family: "Inter", system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+      color: var(--text);
+      transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    /* CONTAINER */
+    .chat-container {
+      width: 100%;
+      max-width: 500px;
+      background: var(--container-bg);
+      backdrop-filter: blur(18px);
+      border-radius: 22px;
+      padding: 22px;
+      height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 15px 45px rgba(0,0,0,0.12);
+      border: 1px solid var(--border);
+      transition: 0.35s ease;
+      position: relative;
+    }
+
+    /* THEME BUTTON */
+    .theme-toggle {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: var(--bubble-user);
+      border: none;
+      padding: 8px 14px;
+      border-radius: 12px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    /* ICON HANDLING */
+    .sun-icon { display: none; }
+    body.dark .sun-icon { display: block; }
+    body.dark .moon-icon { display: none; }
+
+    /* TITLE */
+    .title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* CHAT BOX */
+    .chat-box {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+      transition: 0.35s ease;
+    }
+
+    body.dark .chat-box {
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* CHAT BUBBLE */
+    .msg {
+      padding: 14px 18px;
+      max-width: 78%;
+      border-radius: 18px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-size: 15px;
+      line-height: 1.45;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      opacity: 0;
+      animation: fadeIn 0.35s ease forwards;
+      transition: background 0.35s ease, color 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .ai-msg {
+      background: var(--bubble-ai);
+      color: var(--text);
+      margin-right: auto;
+      border-bottom-left-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .user-msg {
+      margin-left: auto;
+      background: var(--bubble-user);
+      color: white;
+      border-bottom-right-radius: 6px;
+    }
+
+    /* INPUT */
+    .input-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    textarea {
+      flex: 1;
+      resize: none;
+      background: var(--input-bg);
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-size: 16px;
+      transition: 0.35s ease;
+      color: var(--text);
+    }
+
+    textarea:focus {
+      border-color: #3b82f6;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.35);
+    }
+
+    button {
+      width: 58px;
+      height: 58px;
+      background: var(--bubble-user);
+      border: none;
+      color: white;
+      font-size: 22px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    /* MOBILE */
+    @media (max-width: 500px) {
+      body { padding: 0; }
+      .chat-container { height: 100vh; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+
+    <button class="theme-toggle" id="themeToggle">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+    </button>
+
+    <h2 class="title">AI Web Chat</h2>
+
+    <div id="chatbox" class="chat-box"></div>
+
+    <div class="input-container">
+      <textarea id="input" placeholder="Tulis pesan..." rows="2"></textarea>
+      <button id="sendBtn">➤</button>
+    </div>
+  </div>
+
+  <script>
+    const sendBtn = document.getElementById("sendBtn");
+    const input = document.getElementById("input");
+    const chatbox = document.getElementById("chatbox");
+
+    // User membuat pesan
+    function addMessage(sender, text) {
+      const div = document.createElement("div");
+      div.className = sender === "user" ? "msg user-msg" : "msg ai-msg";
+      div.textContent = text;
+      chatbox.appendChild(div);
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+
+    async function sendMessage(userText) {
+      const text = userText ?? input.value.trim();
+      if (!text) return;
+
+      // Tampilkan pesan user
+      if (!userText) addMessage("user", text);
+      input.value = "";
+
+      // Tampilkan loading sementara
+      addMessage("ai", "⏳ Sedang memproses...");
+
+      // Kirim pesan ke server.php
+      try {
+        const response = await fetch("server.php", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text })
+        });
+
+        const data = await response.json();
+
+        const lastAiMsg = document.querySelector(".ai-msg:last-child");
+        if (lastAiMsg) lastAiMsg.remove();
+
+        // Tampilkan jawaban AI
+        if (data.response?.choices?.[0]?.message?.content) {
+          addMessage("ai", data.response.choices[0].message.content);
+        } else {
+          addMessage("ai", "⚠️ Terjadi kesalahan: " + JSON.stringify(data));
+        }
+      } catch (err) {
+        const lastAiMsg = document.querySelector(".ai-msg:last-child");
+        if (lastAiMsg) lastAiMsg.remove();
+        addMessage("ai", "⚠️ Gagal menghubungi server: " + err.message);
+      }
+    }
+
+    sendBtn.onclick = () => sendMessage();
+
+    input.addEventListener("keypress", function(e) {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // Sapaan awal sederhana
+    window.onload = () => {
+      addMessage("ai", "Halo! Saya Webby 😄. Ketik sesuatu untuk memulai obrolan.");
+    };
+
+    /* DARK MODE TOGGLE */
+    const themeBtn = document.getElementById("themeToggle");
+
+    themeBtn.onclick = () => {
+      document.body.classList.toggle("dark");
+    };
+  </script>
+
+</body>
+</html>
