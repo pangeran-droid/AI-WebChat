@@ -23,7 +23,7 @@ Komunikasi dengan API dilakukan melalui server untuk menjaga **API Key** tetap a
 ### 1️⃣ Clone Repository  
    ```bash
    git clone https://github.com/pangeran-droid/AI-WebChat.git
-   cd ai-web-chat
+   cd AI-WebChat
    ```
 
 ### 2️⃣ Masukkan API Key
