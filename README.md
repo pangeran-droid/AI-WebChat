@@ -38,13 +38,13 @@ Gantilah 'YOUR_API_KEY' dengan API key yang kamu dapatkan dari penyedia layanan 
 
 Letakkan seluruh project di folder:
 
-XAMPP → htdocs/AI-WebChat
-
-Laragon → www/AI-WebChat
+- XAMPP → htdocs/AI-WebChat
+- Laragon → www/AI-WebChat
 
 Lalu akses di browser:
-
-http://localhost/AI-WebChat/
+```bash
+http://localhost/AI-WebChat
+```
 
 ### 🛠️ Teknologi yang Digunakan
 
