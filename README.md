@@ -10,7 +10,7 @@ Komunikasi dengan API dilakukan melalui server untuk menjaga **API Key** tetap a
 
 - 💬 **Chat interaktif** dengan AI secara realtime
 - 🧠 Menggunakan model **AI** dari **OpenRouter** (bisa DeepSeek, GPT, Llama, dll)
-- 🔐 **API Key** aman di server (.env) untuk mencegah kebocoran
+- 🔐 **API Key** aman di server (config) untuk mencegah kebocoran
 - 📱 **UI modern & responsif**, kompatibel di desktop dan perangkat mobile
 - ⚡ **Proses cepat** & **ringan**, cocok untuk chatbot atau personal assistant
 - 🌙 **Dark Mode** untuk tampilan yang nyaman di malam hari
